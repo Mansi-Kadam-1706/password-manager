@@ -2,58 +2,125 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PassX - Your Personal Password Manager</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PassX - Your Personal Password Manager</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    #alert {
+      display: none;
+      color: green;
+      font-weight: bold;
+    }
+    button {
+      background-color: black;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-left: 5px;
+    }
+    button:hover {
+      background-color: #444;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 15px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+  </style>
 </head>
 
 <body>
-    <nav>
-        <div class="logo">PassX</div>
-        <ul>
-            <li>Home</li>
-            <li>About</li>
-            <li>Contact</li>
-        </ul>
-    </nav>
-    <div class="container">
-        <h1>Password Manager</h1>
-        <p>We're thrilled to have you here. Your digital life contains a myriad of passwords, and we know how
-            challenging it can be to manage them all. That's why we're here to make it easy for you.</p>
-        <h2>Your Passwords <span id="alert">(Copied!)</span></h2> 
-        <table>
-            <tr>
-                <th>Website</th>
-                <th>Username</th>
-                <th>Password</th>
-                <th>Delete</th>
-            </tr> 
- 
-        </table>
+  <nav>
+    <div class="logo">PassX</div>
+    <ul>
+      <li>Home</li>
+      <li>About</li>
+      <li>Contact</li>
+    </ul>
+  </nav>
 
-        <h2>Add a Password</h2>
-        <form action="/submit" method="post">
+  <div class="container">
+    <h1>Password Manager</h1>
+    <p>We're thrilled to have you here. Your digital life contains a myriad of passwords, and we know how
+      challenging it can be to manage them all. That's why we're here to make it easy for you.</p>
 
-            <!-- Text input for website -->
-            <label for="website">Website:</label>
-            <input type="text" id="website" name="website" required>
-            <br><br>
+    <h2>Your Passwords <span id="alert">(Copied!)</span></h2>
+    <table id="passwordTable">
+      <tr>
+        <th>Website</th>
+        <th>Username</th>
+        <th>Password</th>
+        <th>Delete</th>
+      </tr>
+    </table>
 
-            <!-- Text input for username -->
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-            <br><br>
+    <h2>Add a Password</h2>
+    <form id="passwordForm">
+      <label for="website">Website:</label>
+      <input type="text" id="website" name="website" required>
+      <br><br>
 
-            <!-- Password input -->
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-            <br>
-            <!-- Submit button -->
-            <button class="btn" type="submit">Submit</button>
-        </form>
-    </div>
-    <script src="script.js"></script>
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required>
+      <br><br>
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required>
+      <br><br>
+
+      <button class="btn" type="submit">Submit</button>
+    </form>
+  </div>
+
+  <script>
+    const table = document.getElementById("passwordTable");
+    const form = document.getElementById("passwordForm");
+    const alertBox = document.getElementById("alert");
+
+    // Function to copy text
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        alertBox.style.display = "inline";
+        setTimeout(() => alertBox.style.display = "none", 1500);
+      });
+    }
+
+    // Function to delete row
+    function deleteRow(btn) {
+      let row = btn.parentNode.parentNode;
+      row.parentNode.removeChild(row);
+    }
+
+    // Form submission handler
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      let website = document.getElementById("website").value;
+      let username = document.getElementById("username").value;
+      let password = document.getElementById("password").value;
+
+      let newRow = table.insertRow();
+
+      let cell1 = newRow.insertCell(0);
+      let cell2 = newRow.insertCell(1);
+      let cell3 = newRow.insertCell(2);
+      let cell4 = newRow.insertCell(3);
+
+      cell1.innerHTML = website;
+      cell2.innerHTML = `${username} <button onclick="copyToClipboard('${username}')">Copy</button>`;
+      cell3.innerHTML = `****** <button onclick="copyToClipboard('${password}')">Copy</button>`;
+      cell4.innerHTML = `<button onclick="deleteRow(this)">Delete</button>`;
+
+      form.reset();
+    });
+  </script>
 </body>
-
 </html>
